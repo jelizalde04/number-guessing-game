@@ -1,20 +1,17 @@
-# Use an official Python runtime as a parent image
+# Usar una imagen oficial de Python
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copiar los archivos de la aplicación en el contenedor
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
+# Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
+# Exponer el puerto 5000 para acceder a la aplicación web
 EXPOSE 5000
 
-# Define environment variable
-ENV PYTHONUNBUFFERED 1
-
-# Run app.py when the container launches
+# Ejecutar la aplicación Flask
 CMD ["python", "app.py"]

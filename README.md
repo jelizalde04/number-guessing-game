@@ -38,15 +38,9 @@ If you prefer to run the game using Docker, follow these steps:
 
 1. **Build the Docker image:**
 
-    ```bash
     docker build -t number-guessing-game .
-    ```
+
 
 2. **Run the Docker container:**
 
-    ```bash
-    docker run -p 5000:5000 number-guessing-game
-    ```
-
-    This will start the game within a Docker container, accessible on port 5000.
-
+   docker run -it --rm number-guessing-game

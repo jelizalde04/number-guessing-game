@@ -1,36 +1,46 @@
+from flask import Flask, request, render_template
 import random
 
-def guess_number():
-    # The server chooses a random number between 1 and 100
-    number_to_guess = random.randint(1, 100)
-    attempts = 0
-    max_attempts = 3  # Limit to 3 attempts
+app = Flask(__name__)
 
-    print("Welcome to the number guessing game!")
-    print("I am thinking of a number between 1 and 100.")
-    print(f"You have {max_attempts} attempts to guess the number.")
+# Store the number to guess and attempts globally
+number_to_guess = random.randint(1, 100)
+attempts = 0
+max_attempts = 3
 
-    while attempts < max_attempts:
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    global attempts, number_to_guess, max_attempts
+    message = ""
+    
+    if request.method == 'POST':
         try:
-            # The player enters a number
-            guess = int(input("Enter your guess: "))
-            attempts += 1
-
-            if guess < number_to_guess:
-                print("Too low! Try again.")
-            elif guess > number_to_guess:
-                print("Too high! Try again.")
+            # Check if maximum attempts reached
+            if attempts >= max_attempts:
+                message = f"Sorry, you've used all {max_attempts} attempts. The correct number was {number_to_guess}. Try again!"
+                # Restart game after attempts exhausted
+                number_to_guess = random.randint(1, 100)
+                attempts = 0
             else:
-                print(f"Correct! The number was {number_to_guess}.")
-                print(f"You guessed it in {attempts} attempts.")
-                break  # The game ends when the number is guessed
-        except ValueError:
-            print("Please enter a valid number.")
-        
-        # If the player has reached the maximum number of attempts
-        if attempts == max_attempts:
-            print(f"Sorry, you've used up your {max_attempts} attempts. The correct number was {number_to_guess}.")
+                # Get user's guess
+                guess = int(request.form['guess'])
+                attempts += 1
 
-# Call the main game function
-if __name__ == "__main__":
-    guess_number()
+                if guess < number_to_guess:
+                    message = "Too low! Try again."
+                elif guess > number_to_guess:
+                    message = "Too high! Try again."
+                else:
+                    message = f"Correct! The number was {number_to_guess}. You guessed it in {attempts} attempts."
+                    # Restart with new number after correct guess
+                    number_to_guess = random.randint(1, 100)
+                    attempts = 0
+        
+        except ValueError:
+            message = "Please enter a valid number."
+    
+    return render_template('index.html', message=message)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
